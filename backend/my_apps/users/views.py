@@ -1,0 +1,172 @@
+from django.db import transaction
+from rest_framework import status
+from rest_framework.generics import CreateAPIView, ListAPIView, GenericAPIView, RetrieveUpdateDestroyAPIView
+from django.contrib.auth import get_user_model
+from rest_framework.response import Response
+from rest_framework_simplejwt.tokens import Token
+from django.shortcuts import render, get_object_or_404
+
+from my_apps.users.filters import UserFilter
+from my_apps.users.serializers import UserSerializer, AccountSerializer
+from core.enums.user_enums import AccountTypeEnum
+from core.services.jwt_services import JWTService, ActivateToken
+from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
+from core.permissions.user_permissions import SuperAdminPermission, IsMeUserPermission
+
+UserModel = get_user_model()
+
+
+class UserCreateView(CreateAPIView):
+    queryset = UserModel.objects.all().prefetch_related('account')
+    serializer_class = UserSerializer
+    permission_classes = [AllowAny]
+
+
+class UserListView(ListAPIView):
+    queryset = UserModel.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [IsAdminUser]
+    filterset_class = UserFilter
+
+
+class UserRUDView(RetrieveUpdateDestroyAPIView):
+    queryset = UserModel.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [IsMeUserPermission]
+
+
+class UserActivateView(GenericAPIView):
+    permission_classes = [AllowAny]
+    serializer_class = UserSerializer
+
+    def get(self, *args, **kwargs):
+        token: Token = kwargs.get('token')
+        user = JWTService.validate_token(token, ActivateToken)
+        user.is_active = True
+        user.save()
+        return render(self.request, 'index.html')
+
+
+class UserIsStaffToggleView(GenericAPIView):
+    queryset = UserModel.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [SuperAdminPermission]
+
+    def patch(self, *args, **kwargs):
+        user = self.get_object()
+        user.is_staff = True if not user.is_staff else False
+        user.save()
+        serialize = UserSerializer(user)
+        return Response(serialize.data, status.HTTP_200_OK)
+
+
+class UserAccountCRUDView(GenericAPIView):
+    queryset = UserModel.objects.all()
+    permission_classes = [IsAuthenticated]
+    serializer_class = UserSerializer
+
+    def get(self):
+        user = self.request.user
+        if not user.account:
+            return Response("!!! Uou still do not have an account.", status.HTTP_400_BAD_REQUEST)
+
+        account_serialized = AccountSerializer(user.account)
+        return Response(account_serialized.data, status.HTTP_200_OK)
+
+    @transaction.atomic
+    def post(self, *args, **kwargs):
+        user = self.request.user
+        if user.account:
+            return Response("!!! Forbidden. User already has an account.", status.HTTP_400_BAD_REQUEST)
+        account_serializer = AccountSerializer(data=self.request.data)
+        account_serializer.is_valid(raise_exception=True)
+        account = account_serializer.create(account_serializer.validated_data)
+        user.account = account
+        user.save()
+        user_serialized = self.get_serializer(user)
+        return Response(user_serialized.data, status.HTTP_200_OK)
+
+    def put(self, *args, **kwargs):
+        user = self.request.user
+        account_serializer = AccountSerializer(data=self.request.data)
+        account_serializer.is_valid(raise_exception=True)
+        user.account.account_type = account_serializer.validated_data.get('account_type')
+        user.account.client_type = account_serializer.validated_data.get('client_type')
+        user.save()
+        user_serialized = self.get_serializer(user)
+        return Response(user_serialized.data, status.HTTP_200_OK)
+
+    def patch(self, *args, **kwargs):
+        self.put(self, *args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        user = self.request.user
+        user.account_id = None
+        user.save()
+        user_serialized = self.get_serializer(user)
+        return Response(user_serialized.data, status.HTTP_200_OK)
+
+
+class ManageUserAccountsCRUDView(GenericAPIView):
+    queryset = UserModel.objects.all()
+    permission_classes = [IsAdminUser]
+    serializer_class = UserSerializer
+
+    def get(self):
+        user = get_object_or_404(self.get_queryset(), pk=self.kwargs["pk"])
+        if not user.account:
+            return Response("!!! The User still has no account.", status.HTTP_400_BAD_REQUEST)
+
+        account_serialized = AccountSerializer(user.account)
+        return Response(account_serialized.data, status.HTTP_200_OK)
+
+    @transaction.atomic
+    def post(self, *args, **kwargs):
+        user = get_object_or_404(self.get_queryset(), pk=self.kwargs["pk"])
+        if user.account:
+            return Response("!!! Forbidden. User already has an account.", status.HTTP_400_BAD_REQUEST)
+        account_serializer = AccountSerializer(data=self.request.data)
+        account_serializer.is_valid(raise_exception=True)
+        account = account_serializer.create(account_serializer.validated_data)
+        user.account = account
+        user.save()
+        user_serialized = self.get_serializer(user)
+        return Response(user_serialized.data, status.HTTP_200_OK)
+
+    def put(self, *args, **kwargs):
+        user = get_object_or_404(self.get_queryset(), pk=self.kwargs["pk"])
+        account_serializer = AccountSerializer(data=self.request.data)
+        account_serializer.is_valid(raise_exception=True)
+        user.account.account_type = account_serializer.validated_data.get('account_type')
+        user.account.client_type = account_serializer.validated_data.get('client_type')
+        user.save()
+        user_serialized = self.get_serializer(user)
+        return Response(user_serialized.data, status.HTTP_200_OK)
+
+    def patch(self, *args, **kwargs):
+        self.put(self, *args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        user = get_object_or_404(self.get_queryset(), pk=self.kwargs["pk"])
+        user.account_id = None
+        user.save()
+        user_serialized = self.get_serializer(user)
+        return Response(user_serialized.data, status.HTTP_200_OK)
+
+
+class UserAccountTypeToggleView(GenericAPIView):
+    queryset = UserModel.objects.all()
+    serializer_class = AccountSerializer
+    permission_classes = [SuperAdminPermission]
+
+    def patch(self, *args, **kwargs):
+        user = get_object_or_404(self.get_queryset(), pk=self.kwargs["pk"])
+        account = user.account
+        if not user.account:
+            return Response("User still has no account.", status.HTTP_400_BAD_REQUEST)
+        account.account_type = AccountTypeEnum.BASE.value \
+            if account.account_type != AccountTypeEnum.BASE.value \
+            else AccountTypeEnum.PREMIUM.value
+        account.save()
+        account_serialized = self.get_serializer(account)
+        return Response(account_serialized.data, status.HTTP_200_OK)

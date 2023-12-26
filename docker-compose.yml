@@ -1,0 +1,61 @@
+version: "3.9"
+
+services:
+  app:
+    build:
+      context: .
+    volumes:
+      - ./backend/:/app
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    restart: on-failure
+    depends_on: [ db, ]
+    #    python manage.py wait_db &&
+    command: >
+      sh -c "python manage.py wait_db && python manage.py runserver 0.0.0.0:8000"
+
+  db:
+    image: postgres:16.1-alpine
+    volumes:
+      - ./postgresql:/var/run/postgresql
+    ports:
+      - "5432:5432"
+    env_file:
+      - .env
+    restart: on-failure
+
+  #    web:
+  #      image: nginx:alpine
+  #      ports:
+  #        - "80:80"
+  #      volumes:
+  #        - ./client:/usr/share/nginx/html
+  #        - ./nginx.conf:/etc/nginx/conf.d/default.conf
+  #        - ./backend/static:/usr/share/nginx/doc
+
+  celery:
+    build:
+      context: .
+    volumes:
+      - ./backend:/app
+    env_file:
+      - .env
+    restart: on-failure
+    depends_on: [ redis ]
+    command: >
+      sh -c "celery -A configs worker -l info -B --events"
+  #      sh -c "celery -A configs worker -l info -B"
+
+  redis:
+    image: redis:alpine
+    restart: on-failure
+
+  flower:
+    image: mher/flower:0.9.7
+    restart: on-failure
+    depends_on: [ redis, celery ]
+    ports:
+      - "1111:5555"
+    command: [ "flower", "--broker=redis://redis:6379/0", "--port=5555" ]
