@@ -1,4 +1,3 @@
-import json
 import os
 
 from django.core.mail import EmailMultiAlternatives
@@ -10,21 +9,19 @@ from core.services.jwt_services import ActivateToken, JWTService
 from core.my_dataclasses import UserDataClass
 from configs.celery import app
 
-from concurrent.futures import ThreadPoolExecutor
-
 
 class EmailService:
 
-    @classmethod
+    @staticmethod
     @app.task
-    def send_email(cls, args: SendEmailArgs):
+    def send_email(from_email: str = '', to: str = '', subject: str = '', generated_content: str = ''):
         msg = EmailMultiAlternatives(
-            from_email=args.from_email,
-            to=args.to,
-            subject=args.subject
+            from_email=from_email,
+            to=to,
+            subject=subject
         )
         msg.attach_alternative(
-            content=args.generated_content,
+            content=generated_content,
             mimetype='text/html'
         )
         msg.send()
@@ -37,18 +34,10 @@ class EmailService:
         args = SendEmailArgs(
             subject='Register',
             from_email=os.getenv('EMAIL_HOST_USER'),
-            to=[os.getenv('EMAIL_HOST_USER'), user.email],
+            to=[os.getenv('EMAIL_HOST_USER'), user.email if user else None],
             context={'url': url},
             template=get_template('email_register.html'),
 
         )
 
-        with ThreadPoolExecutor() as executor:
-            executor.submit(cls.send_email, args)
-
-        spam.delay('My text')
-
-
-@app.task
-def spam(text='Spam !!!'):
-    print(text)
+        EmailService.send_email.delay(**args())

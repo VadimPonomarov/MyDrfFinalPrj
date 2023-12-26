@@ -21,7 +21,7 @@ services:
     volumes:
       - ./postgresql:/var/run/postgresql
     ports:
-      - "5432:5432"
+      - "5431:5432"
     env_file:
       - .env
     restart: on-failure
