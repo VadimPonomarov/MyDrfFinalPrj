@@ -6,4 +6,4 @@ from core.models import BaseModel
 class BaseSerializer(ModelSerializer):
     class Meta:
         model = BaseModel
-        fields = '__all__'
+        fields = ('created_at', 'updated_at',)

@@ -9,7 +9,7 @@ from .extra_configs import *
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = os.getenv('SECRET_KEY')
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 DEBUG = True
 
@@ -103,9 +103,9 @@ DATABASES = {
         'HOST': os.environ.get('POSTGRES_HOST'),
         'PORT': os.environ.get('POSTGRES_PORT'),
         'SCHEMA': os.environ.get("POSTGRES_SCHEMA"),
-        # 'OPTIONS': {
-        #     'options': f'-c search_path={os.environ.get("POSTGRES_SCHEMA")}'
-        # }
+        'OPTIONS': {
+            'options': f'-c search_path={os.environ.get("POSTGRES_SCHEMA")}'
+        }
     }
 }
 

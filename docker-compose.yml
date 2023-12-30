@@ -8,6 +8,10 @@ services:
       - ./backend/:/app
     env_file:
       - .env
+    environment:
+      - DOCKER=True
+      - POSTGRES_HOST=db
+      - POSTGRES_PORT=5431
     ports:
       - "8000:8000"
     restart: on-failure

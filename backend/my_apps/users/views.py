@@ -1,6 +1,6 @@
 from django.db import transaction
 from rest_framework import status
-from rest_framework.generics import CreateAPIView, ListAPIView, GenericAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import ListCreateAPIView, GenericAPIView, RetrieveUpdateDestroyAPIView
 from django.contrib.auth import get_user_model
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import Token
@@ -16,28 +16,35 @@ from core.permissions.user_permissions import SuperAdminPermission, IsMeUserPerm
 UserModel = get_user_model()
 
 
-class UserCreateView(CreateAPIView):
+class UserListCreateView(ListCreateAPIView):
+    http_method_names = ('get', 'post',)
     queryset = UserModel.objects.all().prefetch_related('account')
     serializer_class = UserSerializer
-    permission_classes = [AllowAny]
+
+    def get_permissions(self):
+        if self.request.method == 'GET':
+            permission_classes = (IsAdminUser,)
+        else:
+            permission_classes = (AllowAny,)
+        return (permission() for permission in permission_classes)
 
 
-class UserListView(ListAPIView):
-    queryset = UserModel.objects.all()
+class UserRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
+    queryset = UserModel.objects.all().prefetch_related('account')
     serializer_class = UserSerializer
-    permission_classes = [IsAdminUser]
-    filterset_class = UserFilter
 
-
-class UserRUDView(RetrieveUpdateDestroyAPIView):
-    queryset = UserModel.objects.all()
-    serializer_class = UserSerializer
-    permission_classes = [IsMeUserPermission]
+    def get_permissions(self):
+        if self.request.method == 'GET':
+            permission_classes = (IsMeUserPermission,)
+        else:
+            permission_classes = (IsMeUserPermission,)
+        return (permission() for permission in permission_classes)
 
 
 class UserActivateView(GenericAPIView):
-    permission_classes = [AllowAny]
+    http_method_names = ('get',)
     serializer_class = UserSerializer
+    permission_classes = (AllowAny,)
 
     def get(self, *args, **kwargs):
         token: Token = kwargs.get('token')
@@ -45,19 +52,6 @@ class UserActivateView(GenericAPIView):
         user.is_active = True
         user.save()
         return render(self.request, 'index.html')
-
-
-class UserIsStaffToggleView(GenericAPIView):
-    queryset = UserModel.objects.all()
-    serializer_class = UserSerializer
-    permission_classes = [SuperAdminPermission]
-
-    def patch(self, *args, **kwargs):
-        user = self.get_object()
-        user.is_staff = True if not user.is_staff else False
-        user.save()
-        serialize = UserSerializer(user)
-        return Response(serialize.data, status.HTTP_200_OK)
 
 
 class UserAccountCRUDView(GenericAPIView):
