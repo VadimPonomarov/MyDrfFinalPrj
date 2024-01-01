@@ -57,10 +57,17 @@ CONCURRENT_REQUESTS_PER_IP = 16
 
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
-DOWNLOADER_MIDDLEWARES = {
-    "my_scrapy.middlewares.MyScrapyDownloaderMiddleware": 543,
-    'scrapy_playwright.PlaywrightMiddleware': 900,
+# DOWNLOADER_MIDDLEWARES = {
+#     "my_scrapy.middlewares.MyScrapyDownloaderMiddleware": 543,
+#     'scrapy_playwright.PlaywrightMiddleware': 900,
+# }
+
+DOWNLOAD_HANDLERS = {
+    "http": "scrapy_playwright.handler.ScrapyPlaywrightDownloadHandler",
+    "https": "scrapy_playwright.handler.ScrapyPlaywrightDownloadHandler",
 }
+
+TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
 
 PLAYWRIGHT_DEFAULT_NAVIGATION_TIMEOUT = 50000
 
@@ -99,7 +106,6 @@ PLAYWRIGHT_DEFAULT_NAVIGATION_TIMEOUT = 50000
 
 # Set settings whose default value is deprecated to a future-proof value
 REQUEST_FINGERPRINTER_IMPLEMENTATION = "2.7"
-TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
 FEED_EXPORT_ENCODING = "utf-8"
 
 if __name__ == '__main__':
