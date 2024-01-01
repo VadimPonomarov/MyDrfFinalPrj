@@ -37,9 +37,6 @@ class MyPlaywrightBrowser:
         )
         print(f"Browser is init in (minutes): {(time.time() - self.time) / 60}")
 
-    def __call__(self, *args, **kwargs):
-        return self.context
-
     def get_new_page(self):
         return self.context.new_page()
 
@@ -107,11 +104,11 @@ if __name__ == "__main__":
 
         dotenv.load_dotenv()
 
-    browser = MyPlaywrightBrowser(headless=False, headers=True)
+    browser = MyPlaywrightBrowser(headless=False, headers=True, proxy=False, proxy_https=True)
 
     try:
         with browser.page as page:
             page.goto('https://myip.com.ua/', wait_until='load')
             time.sleep(10)
     except Exception as err:
-        pass
+        print(err)

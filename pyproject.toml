@@ -36,7 +36,7 @@ requests = "^2.31.0"
 python-dotenv = "^1.0.0"
 scrapy = "^2.11.0"
 selenium = "^4.16.0"
-scrapy-playwright = "^0.0.33"
+scrapy-playwright = "^0.0.34"
 
 
 
