@@ -4,7 +4,7 @@ import asyncio
 from django.http import HttpResponse
 from rest_framework import status
 
-from my_apps.adds.g4f_cfg import generate_task
+from apps.adds.g4f_cfg import generate_task
 from core.services.g4f_service import g4f_service
 
 

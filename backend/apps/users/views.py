@@ -6,8 +6,8 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import Token
 from django.shortcuts import render, get_object_or_404
 
-from my_apps.users.filters import UserFilter
-from my_apps.users.serializers import UserSerializer, AccountSerializer
+from apps.users.filters import UserFilter
+from apps.users.serializers import UserSerializer, AccountSerializer
 from core.enums.user_enums import AccountTypeEnum
 from core.services.jwt_services import JWTService, ActivateToken
 from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated

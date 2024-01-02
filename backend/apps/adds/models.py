@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.core import validators as V
 from django.db import models
 
-from my_apps.catalogs.models import CarBrandModel, CarBrandModelModel
+from apps.catalogs.models import CarBrandModel, CarBrandModelModel
 
 from core.enums.common_enums import CurrenciesEnum
 from core.models import BaseModel

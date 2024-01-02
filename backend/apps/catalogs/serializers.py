@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from my_apps.catalogs.models import CarBrandModelModel, CarBrandModel, LocalitiesModel
+from apps.catalogs.models import CarBrandModelModel, CarBrandModel, LocalitiesModel
 
 
 class CarBrandSerializer(serializers.ModelSerializer):

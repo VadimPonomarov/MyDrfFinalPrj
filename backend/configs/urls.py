@@ -6,10 +6,10 @@ from rest_framework.permissions import AllowAny
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from graphene_django.views import GraphQLView
-from my_apps.adds import urls as adds
-from my_apps.auth import urls as auth
-from my_apps.catalogs import urls as catalogs
-from my_apps.users import urls as users
+from apps.adds import urls as adds
+from apps.auth import urls as auth
+from apps.catalogs import urls as catalogs
+from apps.users import urls as users
 
 schema_view: get_schema_view = get_schema_view(
     openapi.Info(

@@ -4,8 +4,8 @@ from rest_framework import status, mixins
 from rest_framework.generics import GenericAPIView, RetrieveUpdateDestroyAPIView
 from werkzeug.sansio.response import Response
 
-from my_apps.adds.models import AddsModel
-from my_apps.adds.serializers import AddsSerializer, AddsSerializer_
+from apps.adds.models import AddsModel
+from apps.adds.serializers import AddsSerializer, AddsSerializer_
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 

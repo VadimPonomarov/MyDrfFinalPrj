@@ -11,8 +11,8 @@ from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.response import Response
 
 import pandas as pd
-from my_apps.catalogs.models import CarBrandModel, CarBrandModelModel
-from my_apps.catalogs.serializers import CarBrandModelSerializer, CarBrandSerializer
+from apps.catalogs.models import CarBrandModel, CarBrandModelModel
+from apps.catalogs.serializers import CarBrandModelSerializer, CarBrandSerializer
 
 from .models import LocalitiesModel
 from .serializers import LocalitiesSerializer

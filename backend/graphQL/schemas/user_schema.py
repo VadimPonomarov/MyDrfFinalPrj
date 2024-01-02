@@ -6,7 +6,7 @@ from graphql_jwt.decorators import login_required, staff_member_required
 from django.contrib.auth.base_user import BaseUserManager
 
 from core.services.email_services import EmailService
-from my_apps.users.serializers import UserSerializer
+from apps.users.serializers import UserSerializer
 from ..gql_types import UserModel, UserType
 
 

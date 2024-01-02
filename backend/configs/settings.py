@@ -3,7 +3,7 @@ from pathlib import Path
 
 from django.contrib.auth import get_user_model
 
-import my_apps.adds.middlewares
+import apps.adds.middlewares
 
 from .extra_configs import *
 
@@ -22,6 +22,7 @@ CORS_ALLOWED_ORIGINS = [
 INSTALLED_APPS = [
     'django.contrib.auth',
     'django',
+    'daphne',
     'corsheaders',
     'django.contrib.contenttypes',
     'django.contrib.staticfiles',
@@ -40,13 +41,14 @@ INSTALLED_APPS = [
     'graphql_jwt',
     'graphql_jwt.refresh_token.apps.RefreshTokenConfig',
 
-    # my_apps
-    'my_apps.users',
-    'my_apps.auth',
-    'my_apps.catalogs',
-    'my_apps.adds',
+    # apps
+    'apps.users',
+    'apps.auth',
+    'apps.catalogs',
+    'apps.adds',
     'core',
     'configs',
+    'apps.chat',
 ]
 
 MIDDLEWARE = [
@@ -57,7 +59,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'drf_api_logger.middleware.api_logger_middleware.APILoggerMiddleware',
     # 'silk.middleware.SilkyMiddleware',
-    'my_apps.adds.middlewares.DataBadWordsValidationMiddleware'
+    'apps.adds.middlewares.DataBadWordsValidationMiddleware'
 ]
 ROOT_URLCONF = 'configs.urls'
 

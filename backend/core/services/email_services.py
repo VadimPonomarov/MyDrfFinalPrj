@@ -8,6 +8,7 @@ from core.services.email_extras.email_data_classes import SendEmailArgs
 from core.services.jwt_services import ActivateToken, JWTService
 from core.my_dataclasses import UserDataClass
 from configs.celery import app
+from concurrent.futures import ThreadPoolExecutor
 
 
 class EmailService:
@@ -30,14 +31,16 @@ class EmailService:
     def send_register_email(cls, user: UserDataClass):
         token = JWTService.create_token(user=user, token_class=ActivateToken)
         url = os.getenv('BASE_URL').strip() + reverse(viewname='users_activate', kwargs={"token": token})
-
         args = SendEmailArgs(
             subject='Register',
             from_email=os.getenv('EMAIL_HOST_USER'),
             to=[os.getenv('EMAIL_HOST_USER'), user.email if user else None],
             context={'url': url},
             template=get_template('email_register.html'),
-
         )
 
-        EmailService.send_email.delay(**args())
+        if os.environ.get('DOCKER'):
+            cls.send_email.delay(**args())
+        else:
+            with ThreadPoolExecutor(max_workers=os.cpu_count() * 3) as executor:
+                executor.submit(cls.send_email(**args()))

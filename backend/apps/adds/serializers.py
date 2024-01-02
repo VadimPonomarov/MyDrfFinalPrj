@@ -1,9 +1,9 @@
 from rest_framework import serializers
 
-from my_apps.adds.models import AddsModel
-from my_apps.catalogs.serializers import CarBrandModelSerializer_, \
+from apps.adds.models import AddsModel
+from apps.catalogs.serializers import CarBrandModelSerializer_, \
     CarBrandSerializer_
-from my_apps.users.serializers import UserSerializer_
+from apps.users.serializers import UserSerializer_
 
 
 class AddsSerializer_(serializers.ModelSerializer):

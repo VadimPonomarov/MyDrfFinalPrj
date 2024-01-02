@@ -1,7 +1,6 @@
 from django.apps import AppConfig
 
 
-class AuthConfig(AppConfig):
+class AddsConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'my_apps.auth'
-    label = 'my_auth'
+    name = 'apps.catalogs'

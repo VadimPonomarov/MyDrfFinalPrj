@@ -37,6 +37,7 @@ python-dotenv = "^1.0.0"
 scrapy = "^2.11.0"
 selenium = "^4.16.0"
 scrapy-playwright = "^0.0.34"
+channels = "^4.0.0"
 
 
 
