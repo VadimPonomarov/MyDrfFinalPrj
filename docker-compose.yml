@@ -10,6 +10,7 @@ services:
       - .env
     environment:
       - DOCKER=True
+      - POSTGRES_HOST=db
     ports:
       - "8000:8000"
     restart: on-failure
@@ -44,6 +45,8 @@ services:
       - ./backend:/app
     env_file:
       - .env
+    environment:
+      - POSTGRES_HOST=db
     restart: on-failure
     depends_on: [ redis ]
     command: >

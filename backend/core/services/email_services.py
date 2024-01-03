@@ -29,6 +29,7 @@ class EmailService:
 
     @classmethod
     def send_register_email(cls, user: UserDataClass):
+
         token = JWTService.create_token(user=user, token_class=ActivateToken)
         url = os.getenv('BASE_URL').strip() + reverse(viewname='users_activate', kwargs={"token": token})
         args = SendEmailArgs(
@@ -42,5 +43,6 @@ class EmailService:
         if os.environ.get('DOCKER'):
             cls.send_email.delay(**args())
         else:
-            with ThreadPoolExecutor(max_workers=os.cpu_count() * 3) as executor:
-                executor.submit(cls.send_email(**args()))
+            executor = ThreadPoolExecutor()
+            executor.submit(cls.send_email, **args())
+            executor.shutdown(wait=False)
