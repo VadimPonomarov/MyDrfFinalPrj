@@ -30,5 +30,6 @@ urlpatterns = [
     # path('api/silk', include('silk.urls', namespace='silk')),
     path('api/doc', schema_view.with_ui('swagger', cache_timeout=0)),
     path("api/graphql", GraphQLView.as_view(graphiql=True)),
+
     # path("api/graphql", csrf_exempt(GraphQLView.as_view(graphiql=True))),
 ]

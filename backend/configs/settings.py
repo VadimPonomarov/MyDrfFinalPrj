@@ -32,6 +32,8 @@ INSTALLED_APPS = [
     'django_filters',
     'drf_api_logger',
     'drf_yasg',
+    'channels',
+    'rest_framework',
     # 'silk',
     'redis',
     'celery',
@@ -153,4 +155,3 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'storage')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 APPEND_SLASH = False
-
