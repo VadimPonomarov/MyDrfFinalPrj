@@ -1,4 +1,5 @@
 from .celery_conf import *
+from .channels_conf import *
 from .drf_api_logger_conf import *
 from .drf_conf import *
 from .drf_yasg_conf import *

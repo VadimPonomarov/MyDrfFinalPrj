@@ -1,12 +1,14 @@
 import asyncio
 
-from rest_framework.serializers import ModelSerializer
 from django.contrib.auth import get_user_model
 from django.db import transaction
 
-from core.serializers import BaseSerializer
+from rest_framework.serializers import ModelSerializer
+
 from apps.users.models import AccountModel
-from core.services.email_services import EmailService
+
+from core.serializers import BaseSerializer
+from core.services.email_service import EmailService
 
 UserModel = get_user_model()
 

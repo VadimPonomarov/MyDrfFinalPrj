@@ -1,5 +1,5 @@
-from enum import Enum
 from datetime import timedelta
+from enum import Enum
 from typing import Type
 
 
@@ -10,6 +10,11 @@ class ActionTokenEnum(Enum):
     )
     RESET = (
         'reset',
+        timedelta(minutes=30)
+    )
+
+    RECOVERY = (
+        'recovery',
         timedelta(minutes=30)
     )
 

@@ -1,17 +1,19 @@
-from django.db import transaction
-from rest_framework import status
-from rest_framework.generics import ListCreateAPIView, GenericAPIView, RetrieveUpdateDestroyAPIView
 from django.contrib.auth import get_user_model
+from django.db import transaction
+from django.shortcuts import get_object_or_404, render
+
+from rest_framework import status
+from rest_framework.generics import GenericAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
-from rest_framework_simplejwt.tokens import Token
-from django.shortcuts import render, get_object_or_404
 
 from apps.users.filters import UserFilter
-from apps.users.serializers import UserSerializer, AccountSerializer
+from apps.users.serializers import AccountSerializer, UserSerializer
+
 from core.enums.user_enums import AccountTypeEnum
-from core.services.jwt_services import JWTService, ActivateToken
-from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
-from core.permissions.user_permissions import SuperAdminPermission, IsMeUserPermission
+from core.permissions.user_permissions import IsMeUserPermission, SuperAdminPermission
+from core.services.jwt_service import ActivateToken, JWTService
+from rest_framework_simplejwt.tokens import Token
 
 UserModel = get_user_model()
 

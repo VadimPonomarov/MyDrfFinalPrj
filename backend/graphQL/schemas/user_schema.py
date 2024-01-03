@@ -1,12 +1,15 @@
 import os
 from concurrent.futures import ThreadPoolExecutor
-import graphene
-from graphene.types import ResolveInfo
-from graphql_jwt.decorators import login_required, staff_member_required
+
 from django.contrib.auth.base_user import BaseUserManager
 
-from core.services.email_services import EmailService
 from apps.users.serializers import UserSerializer
+
+import graphene
+from core.services.email_service import EmailService
+from graphene.types import ResolveInfo
+from graphql_jwt.decorators import login_required, staff_member_required
+
 from ..gql_types import UserModel, UserType
 
 
