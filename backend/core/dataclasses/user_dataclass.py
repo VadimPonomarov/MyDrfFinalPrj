@@ -3,15 +3,6 @@ from datetime import datetime
 
 
 @dataclass
-class ProfileDataClass:
-    id: int
-    name: str
-    surname: str
-    age: int
-    avatar: str
-
-
-@dataclass
 class UserDataClass:
     id: int
     email: str
@@ -21,4 +12,3 @@ class UserDataClass:
     is_superuser: bool
     crated_at: datetime
     updated_at: datetime
-    profile: ProfileDataClass

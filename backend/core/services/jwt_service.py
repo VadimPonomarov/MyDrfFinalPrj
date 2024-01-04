@@ -40,8 +40,9 @@ class JWTService:
     def validate_token(token, token_class: ActionTokenClassType):
         try:
             token_res = token_class(token)
+            # token_res.verify()
             token_res.check_blacklist()
-        except Exception:
+        except Exception as err:
             raise JwtException
 
         token_res.blacklist()
