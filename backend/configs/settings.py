@@ -13,11 +13,9 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [i.strip() for i in os.environ.get('ALLOWED_HOSTS').split(',')]
 
-CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000',
-]
+CORS_ALLOWED_ORIGINS = [i.strip() for i in os.environ.get('CORS_ALLOWED_ORIGINS').split(',')]
 
 INSTALLED_APPS = [
     'django.contrib.auth',
@@ -60,8 +58,8 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'drf_api_logger.middleware.api_logger_middleware.APILoggerMiddleware',
+    'apps.adds.middlewares.DataBadWordsValidationMiddleware',
     # 'silk.middleware.SilkyMiddleware',
-    'apps.adds.middlewares.DataBadWordsValidationMiddleware'
 ]
 ROOT_URLCONF = 'configs.urls'
 
